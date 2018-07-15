@@ -2,3 +2,28 @@
 
 https://www.linkedin.com/pulse/automated-service-deployment-using-jenkins-kubernetes-ganaesan
 
+
+to authenticate:
+
+ https://devops.stackexchange.com/questions/3537/how-to-login-to-k8s-proxy-nowadays?rq=1
+ 
+ cat dashboard-rolebinding.yaml
+ 
+  apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashboard
+  labels:
+    k8s-app: kubernetes-dashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: kubernetes-dashboard
+  namespace: kube-system
+  
+  
+  kubectl create -f dashboard-rolebinding.yaml
+
