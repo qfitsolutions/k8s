@@ -1,5 +1,10 @@
 
+setup:
+ https://www.linkedin.com/pulse/automated-service-deployment-using-jenkins-kubernetes-ganaesan
+commands:
 https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+
+prometheus:
 https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/
 
 https://prometheus.io/docs/introduction/overview/
