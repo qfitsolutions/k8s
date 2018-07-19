@@ -4,6 +4,10 @@ setup:
 commands:
 https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 
+connect to pods:
+
+ https://kubernetes.io/docs/tasks/debug-application-cluster/get-shell-running-container/
+ 
 prometheus:
 https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/
 
