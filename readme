@@ -29,3 +29,9 @@ subjects:
   
   kubectl create -f dashboard-rolebinding.yaml
 
+
+
+stop proxy:
+ netstat -tulp | grep kubectl 
+ Then run sudo kill -9 <pid> to kill the process.
+
