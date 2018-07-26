@@ -1,5 +1,54 @@
 
+############################
 
+steps to follow to install jube master:
+
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.0/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+apt-get update && apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+apt-get update
+apt-get install -y kubelet kubeadm
+kubeadm init
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+kubectl apply -f https://docs.projectcalico.org/v2.6/getting-started/kubernetes/installation/hosted/kubeadm/1.6/calico.yaml
+kubectl get pods --all-namespaces
+kubectl get nodes 
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+
+kubectl proxy --address 0.0.0.0 --accept-hosts '.*' &
+
+
+Access the dashboard using the below link
+
+http://<ip>:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/overview?namespace=default
+
+
+#######################################################
+steps for kube worker node:
+
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.0/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+apt-get update && apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+apt-get update
+apt-get install -y kubelet kubeadm
+kubeadm join 172.31.26.24:6443 --token hpnfgz.52pq3e95hrsz68c6 --discovery-token-ca-cert-hash sha256:92f783e806fb2b0bd36c2847d276847e78a14e07f86256cdbb4f3d79b9618df8
+
+
+
+
+################################
 https://www.linkedin.com/pulse/automated-service-deployment-using-jenkins-kubernetes-ganaesan
 
 clear
