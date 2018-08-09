@@ -1,7 +1,7 @@
 
 ############################
 
-steps to follow to install jube master:
+steps to follow to install kube master:
 
 curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.0/bin/linux/amd64/kubectl
 chmod +x ./kubectl
