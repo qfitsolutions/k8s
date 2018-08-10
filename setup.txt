@@ -39,6 +39,11 @@ http://<ip>:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboa
 
 #######################################################
 steps for kube worker node:
+apt-get update && apt-get install -y apt-transport-https
+apt install docker.io
+     systemctl start docker
+     systemctl enable docker
+
 
 curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.0/bin/linux/amd64/kubectl
 chmod +x ./kubectl
@@ -50,6 +55,7 @@ deb http://apt.kubernetes.io/ kubernetes-xenial main
 EOF
 apt-get update
 apt-get install -y kubelet kubeadm
+apt-get install -y kubelet kubeadm  kubernetes-cni
 kubeadm join 172.31.26.24:6443 --token hpnfgz.52pq3e95hrsz68c6 --discovery-token-ca-cert-hash sha256:92f783e806fb2b0bd36c2847d276847e78a14e07f86256cdbb4f3d79b9618df8
 
 
