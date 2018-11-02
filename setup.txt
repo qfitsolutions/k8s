@@ -4,21 +4,16 @@
 steps to follow to install kube master:
 
 apt-get update && apt-get install -y apt-transport-https
-apt install docker.io
+apt install docker.io -y
      systemctl start docker
      systemctl enable docker
- apt-get install -y kubelet kubeadm kubectl kubernetes-cni
-
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.0/bin/linux/amd64/kubectl
-chmod +x ./kubectl
-sudo mv ./kubectl /usr/local/bin/kubectl
-apt-get update && apt-get install -y apt-transport-https
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
 deb http://apt.kubernetes.io/ kubernetes-xenial main
 EOF
 apt-get update
-apt-get install -y kubelet kubeadm
+apt-get install -y kubelet kubeadm kubectl kubernetes-cni
+
 
 kubeadm init
 mkdir -p $HOME/.kube
@@ -40,6 +35,9 @@ http://<ip>:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboa
 
 #######################################################
 steps for kube worker node:
+Configure the Kubernetes Worker Nodes (k8s-node<n>)
+Setting up cluster nodes is very easy. Just refer back to the "kubeadm init" output logs (/root/kubeadm_init.log). In the last line of the the logs, there is a “kubeadm join” command with token information and other parameters.
+
 apt-get update && apt-get install -y apt-transport-https
 apt install docker.io
      systemctl start docker
