@@ -116,3 +116,27 @@ dashboard url:
  http://ec2-13-126-13-24.ap-south-1.compute.amazonaws.com
 :8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/overview?namespace=default
 
+
+
+vi dashboard-rolebinding.yaml
+ 
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashboard
+  labels:
+    k8s-app: kubernetes-dashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: kubernetes-dashboard
+  namespace: kube-system
+  
+  
+kubectl create -f dashboard-rolebinding.yaml     
+
+
+
