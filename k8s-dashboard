@@ -2,6 +2,8 @@
 
 signin issue:
 
+https://github.com/kubernetes/dashboard/wiki/Accessing-Dashboard---1.7.X-and-above
+
 https://github.com/kubernetes/dashboard/issues/2735
 
 https://docs.giantswarm.io/guides/install-kubernetes-dashboard/
@@ -24,3 +26,12 @@ kubectl create clusterrolebinding cluster-admin-dashboard-sa \
 
 # Parse the token
 TOKEN=$(kubectl describe secret $(kubectl -n kube-system get secret | awk '/^cluster-admin-dashboard-sa-token-/{print $1}') | awk '$1=="token:"{print $2}')
+
+
+$ kubectl -n kube-system edit service kubernetes-dashboard
+
+             You should see yaml representation of the service.
+              Change type: ClusterIP to type: NodePort and save file. 
+              If it's already changed go to next step.
+              
+ $ kubectl -n kube-system get service kubernetes-dashboard
