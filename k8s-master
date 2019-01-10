@@ -1,13 +1,41 @@
 
+dashboard-token:
 https://github.com/kubernetes/dashboard/wiki/Creating-sample-user#bearer-token
 
-
+https://stackoverflow.com/questions/46664104/how-to-sign-in-kubernetes-dashboard
 
 ##########################
 
+steps to follow to install kube master:
+
+apt-get update && apt-get install -y apt-transport-https && \
+apt install docker.io -y && \
+     systemctl start docker && \
+     systemctl enable docker && \
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+EOF && \
+apt-get update && \
+apt-get install -y kubelet kubeadm kubectl kubernetes-cni
 
 
+kubeadm init
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+kubectl apply -f https://docs.projectcalico.org/v3.4/getting-started/kubernetes/installation/hosted/calico.yaml
+kubectl get pods --all-namespaces
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+kubectl get nodes 
+kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/aio/deploy/recommended/kubernetes-dashboard.yaml
 
+kubectl proxy --address 0.0.0.0 --accept-hosts '.*' &
+
+
+Access the dashboard using the below link
+
+http://<ip>:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/overview?namespace=default
 
 
 # Create service account
