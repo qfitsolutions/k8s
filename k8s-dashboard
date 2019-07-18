@@ -1,5 +1,8 @@
 
+dashboard setup:
 
+ https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html
+ 
 signin issue:
 
 https://github.com/kubernetes/dashboard/wiki/Accessing-Dashboard---1.7.X-and-above
