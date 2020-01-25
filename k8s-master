@@ -36,6 +36,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/
 
 #http://<ip>:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/overview?namespace=default
 #https://devblogs.microsoft.com/premier-developer/bypassing-authentication-for-the-local-kubernetes-cluster-dashboard/
+#https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html
 
 # Create service account
 kubectl create serviceaccount cluster-admin-dashboard-sa
