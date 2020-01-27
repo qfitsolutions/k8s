@@ -24,27 +24,7 @@ kubectl apply -f https://docs.projectcalico.org/v3.4/getting-started/kubernetes/
 kubectl get pods --all-namespaces
 kubectl get nodes 
 
-refer: https://github.com/kubernetes/dashboard
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
-
-#kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/aio/deploy/recommended/kubernetes-dashboard.yaml
-
-#kubectl proxy --address 0.0.0.0 --accept-hosts '.*' &
-
-
-#Access the dashboard using the below link
-
-#http://<ip>:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/overview?namespace=default
-#https://devblogs.microsoft.com/premier-developer/bypassing-authentication-for-the-local-kubernetes-cluster-dashboard/
-#https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html
-
-# Create service account
-kubectl create serviceaccount cluster-admin-dashboard-sa
-
-# Bind ClusterAdmin role to the service account
-kubectl create clusterrolebinding cluster-admin-dashboard-sa \
-  --clusterrole=cluster-admin \
-  --serviceaccount=default:cluster-admin-dashboard-sa
+dashboard: refer: https://github.com/kubernetes/dashboard
 
 # Parse the token
 TOKEN=$(kubectl describe secret $(kubectl -n kube-system get secret | awk '/^cluster-admin-dashboard-sa-token-/{print $1}') | awk '$1=="token:"{print $2}')
