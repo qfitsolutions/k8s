@@ -12,3 +12,24 @@ EOF
 yum install -y kubelet kubeadm kubectl
 systemctl enable kubelet
 systemctl start kubelet
+
+kubeadm init --ignore-preflight-errors all
+mkdir -p $HOME/.kube && \
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config && \
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+kubectl apply -f https://docs.projectcalico.org/v3.4/getting-started/kubernetes/installation/hosted/calico.yaml
+kubectl get pods --all-namespaces
+kubectl get nodes 
+
+dashboard: refer: https://github.com/kubernetes/dashboard
+
+# Parse the token
+token=kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+
+$ kubectl -n kube-system edit service kubernetes-dashboard
+
+             You should see yaml representation of the service.
+              Change type: ClusterIP to type: NodePort and save file. 
+              If it's already changed go to next step.
+              
+ $ kubectl -n kube-system get service kubernetes-dashboard
