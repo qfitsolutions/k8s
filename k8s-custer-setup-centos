@@ -1,12 +1,12 @@
 
-sudo yum install -y yum-utils && \
+sudo yum check-update && \
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2 && \
 sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo && \
-sudo yum makecache fast && \
-sudo yum update && \
-sudo yum -y install docker-ce && \
+sudo yum install docker && \
 sudo systemctl start docker && \
 systemctl status docker && \
-systemctl enable docker
+systemctl enable docker && \
+sudo systemctl status docker0
 
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
