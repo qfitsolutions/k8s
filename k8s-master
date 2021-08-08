@@ -15,6 +15,13 @@ EOF && \
 apt-get update && \
 apt-get install -y kubelet kubeadm kubectl kubernetes-cni
 
+cat <<EOF >/etc/docker/daemon.json
+{
+  "exec-opts": ["native.cgroupdriver=systemd"]
+}
+EOF
+systemctl restart docker
+systemctl status docker
 
 kubeadm init --ignore-preflight-errors all   (or) sudo kubeadm init --control-plane-endpoint "PUBLIC_IP:PORT" --ignore-preflight-errors all 
 mkdir -p $HOME/.kube && \
