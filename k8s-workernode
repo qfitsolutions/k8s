@@ -11,6 +11,13 @@ deb http://apt.kubernetes.io/ kubernetes-xenial main
 EOF && \
 apt-get update && \
 apt-get install -y kubelet kubeadm kubectl kubernetes-cni
+cat <<EOF >/etc/docker/daemon.json
+{
+  "exec-opts": ["native.cgroupdriver=systemd"]
+}
+EOF
+systemctl restart docker
+systemctl status docker
 kubeadm join 172.31.26.24:6443 --token hpnfgz.52pq3e95hrsz68c6 --discovery-token-ca-cert-hash sha256:92f783e806fb2b0bd36c2847d276847e78a14e07f86256cdbb4f3d79b9618df8
 
 masterside to fecth the token:
