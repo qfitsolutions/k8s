@@ -4,7 +4,7 @@
 
 steps to follow to install 
 
-K8s master:
+1. K8s master:
 
 apt-get update && apt-get install -y apt-transport-https && \
 apt install docker.io -y && \
@@ -34,7 +34,7 @@ kubectl get pods --all-namespaces
 kubectl get nodes 
 
 
-K8s nodes:
+2. K8s nodes:
 apt-get update && apt-get install -y apt-transport-https && \
 apt install docker.io -y && \
      systemctl start docker && \
@@ -57,22 +57,41 @@ systemctl status docker
 #Note: get kubeadm join command from k8s master and execute like below command:
 #kubeadm join 172.31.26.24:6443 --token hpnfgz.52pq3e95hrsz68c6 --discovery-token-ca-cert-hash sha256:92f783e806fb2b0bd36c2847d276847e78a14e07f86256cdbb4f3d79b9618df8
 
-Dashboard:
+3. k8s-client:
+  $mkdir ~/.kube
+  touch ~/.kube/config
+  get the content from k8s master (cat ~/.kube/config) file and paste it in config file.
+  kubectl get node
+  
+
+4. Dashboard:
 refer: https://github.com/kubernetes/dashboard
 
-# Parse the token
-token=kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+Note Execute command from k8s -client node:
 
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.4.0/aio/deploy/recommended.yaml
+
+ $ kubectl -n kube-system get service kubernetes-dashboard
 $ kubectl -n kube-system edit service kubernetes-dashboard
 
              You should see yaml representation of the service.
               Change type: ClusterIP to type: NodePort and save file. 
               If it's already changed go to next step.
-              
  $ kubectl -n kube-system get service kubernetes-dashboard
+
+access the url from browser:
+ 1. https://nodeip:portnumber
  
- k8s-client:
-  $mkdir ~/.kube
-  touch ~/.kube/config
-  get the content from k8s master (cat ~/.kube/config) file and paste it in config file.
-  kubectl get node
+create user:              
+https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md
+
+              
+
+# Parse the token
+token=kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+
+
+              
+
+ 
+ 
