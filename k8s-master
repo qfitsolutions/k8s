@@ -85,7 +85,16 @@ access the url from browser:
 create user:              
 https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md
 
-              
+cat >build-robot-secret.yaml <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+  annotations: 
+    kubernetes.io/service-account.name: admin-user
+type: kubernetes.io/service-account-token
+EOF
 
 # Parse the token
 token=kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
