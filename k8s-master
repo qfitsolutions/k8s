@@ -1,7 +1,7 @@
 
 
 ##########################
-
+launch 2 - ec2  ubuntu20 t2.medium type instances.
 steps to follow to install 
 
 1. K8s master:
