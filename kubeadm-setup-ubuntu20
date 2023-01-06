@@ -77,3 +77,5 @@ EOF
    16  sudo apt-mark hold kubelet kubeadm kubectl
    18  sudo kubeadm join 172.31.9.243:6443 --token 5r8dp1.joi18srndzf1blik --discovery-token-ca-cert-hash sha256:dccc602bef2fbefb0027cb9295304792bf9503346fc62b8f95acca1b5b8facdb
    
+if you want to generate kubeadm join command from master use below command in master node:
+sudo kubeadm token create --print-join-command
