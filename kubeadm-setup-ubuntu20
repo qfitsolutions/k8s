@@ -1,13 +1,14 @@
- 1  sudo -i
-    2  sudo apt-get install -y     apt-transport-https     ca-certificates     curl     gnupg     lsb-release
-    3  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-    4  curl -fsSL https://download.docker.com/linux/ubuntu/gpg
-    5  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-    6  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+user should be ubuntu:
+
+master:
+
+     sudo apt-get install -y     apt-transport-https     ca-certificates     curl     gnupg     lsb-release
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+      echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    7  sudo apt-get update
-    8  sudo apt-get install docker-ce docker-ce-cli containerd.io
-    9  cat <<EOF | sudo tee /etc/docker/daemon.json
+      sudo apt-get update
+      sudo apt-get install docker-ce docker-ce-cli containerd.io
+      cat <<EOF | sudo tee /etc/docker/daemon.json
 {
   "exec-opts": ["native.cgroupdriver=systemd"],
   "log-driver": "json-file",
@@ -24,17 +25,13 @@ EOF
    13  sudo systemctl status docker.service
    14  sudo systemctl enable docker.service
    15  sudo systemctl restart docker
+   24  sudo rm /etc/containerd/config.toml
+   25  sudo systemctl restart containerd
    16  sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
    17  echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-   18  sudo apt-get update
    19  sudo apt update
    20  sudo apt-get install -y kubelet kubeadm kubectl
    21  sudo apt-mark hold kubelet kubeadm kubectl
-   22  sudo kubeadm init --pod-network-cidr 10.0.0.0/16
-   23  sudo kubeadm init --pod-network-cidr 10.0.0.0/16 --ignore-preflight-errors=all
-   24  sudo rm /etc/containerd/config.toml
-   25  sudo systemctl restart containerd
-   26  sudo kubeadm reset
    27  sudo kubeadm init --pod-network-cidr 10.0.0.0/16 --ignore-preflight-errors=all
    28  sudo mkdir -p $HOME/.kube
    29  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -46,3 +43,37 @@ EOF
    35  kubectl get all --all-namespaces
    36  kubectl get pod --all-namespaces
    37  kubectl get nodes
+
+
+
+node:
+
+ 2  sudo apt-get install -y     apt-transport-https     ca-certificates     curl     gnupg     lsb-release
+    3  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    4  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    5  sudo apt-get update
+    6  cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2"
+}
+EOF
+
+    7  sudo usermod -aG docker $USER
+    8  sudo chmod 666 /var/run/docker.sock
+    9  sudo systemctl enable docker.service
+   10  sudo systemctl restart docker
+   11  sudo rm /etc/containerd/config.toml
+   12  sudo systemctl restart containerd
+   13  sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+   14  echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+   15  sudo apt update
+   17  sudo apt-get install -y kubelet kubeadm kubectl
+   16  sudo apt-mark hold kubelet kubeadm kubectl
+   18  sudo kubeadm join 172.31.9.243:6443 --token 5r8dp1.joi18srndzf1blik --discovery-token-ca-cert-hash sha256:dccc602bef2fbefb0027cb9295304792bf9503346fc62b8f95acca1b5b8facdb
+   
