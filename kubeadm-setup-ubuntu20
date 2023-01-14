@@ -38,7 +38,6 @@ EOF
    29  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
    30  sudo chown $(id -u):$(id -g) $HOME/.kube/config
    31  kubectl get nodes
-   32  kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
    33  kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
    34  kubectl get nodes
    35  kubectl get all --all-namespaces
