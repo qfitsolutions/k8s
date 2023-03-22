@@ -94,3 +94,38 @@ EOF
    18  systemctl restart kubelet
    19  kubeadm join 172.31.47.65:6443 --token wvyzbi.1uqs8xzsr1rnc4ca --discovery-token-ca-cert-hash sha256:01607921b755c439d4db5bf7036720974b34b7dd390ea0132342b17159111d05
    20  history
+
+
+
+client:
+apt-get update && sudo apt-get install -y apt-transport-https curl
+   80  sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+   81  curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+   82  sudo cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+
+   83  sudo apt update
+   84  sudo apt install kubectl -y
+   85  clear
+   86  kubectl
+   87  kubectl get node
+   88  mkdir .kube
+   89  cd .kube/
+   90  touh config
+   91  touch config
+   92  vi config 
+   93  kubectl get node
+   94  clear
+   95  cd
+   96  kubectl get pod --all-namespaces
+   97  kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+   98  kubectl get svc -n kubernetes-dashboard
+   99  kubectl edit svc kubernetes-dashboard -n kubernetes-dashboard
+  100  kubectl get svc -n kubernetes-dashboard
+  101  clear
+  102  touch role.yml
+  103  vi role.yml 
+  104  kubectl apply -f role.yml 
+  105  kubectl get -f role.yml 
+  106  kubectl -n kubernetes-dashboard create token admin-user
