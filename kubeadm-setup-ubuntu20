@@ -83,10 +83,12 @@ sudo kubeadm token create --print-join-command
 
 
 client:
-2  sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    3  echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-    4  sudo apt update
-    5  sudo apt install kubectl -y
+
+   25  mkdir -p /etc/apt/keyrings/
+   26  curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+   27  echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+   28  sudo apt-get update
+   29  sudo apt-get install -y kubectl
     8  mkdir .kube
     9  cd .kube/
    10  touch config
