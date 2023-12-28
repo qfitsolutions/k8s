@@ -72,8 +72,8 @@ EOF
    12  sudo systemctl enable docker.service
    13  sudo rm /etc/containerd/config.toml
    14  mkdir -p /etc/apt/keyrings/
-   15  curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-   16  echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+   26  sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+   17  sudo echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
    17  sudo apt-get update
    18  sudo apt-get install -y kubelet kubeadm kubectl
    19  kubeadm join 172.31.39.115:6443 --token g6vqcw.wkpmbf25fbe6yraq --discovery-token-ca-cert-hash sha256:9224cf7c0a4afb5344eae77edf0a62c4f3ddbe488a139c536c68071cb580380b 
