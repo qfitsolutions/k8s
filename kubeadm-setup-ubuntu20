@@ -28,8 +28,8 @@ EOF
    15  sudo systemctl restart docker
    24  sudo rm /etc/containerd/config.toml
    25  sudo systemctl restart containerd
-   16  sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-   17  echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+   26  sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+   17  sudo echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
    19  sudo apt update
    20  sudo apt-get install -y kubelet kubeadm kubectl
    21  sudo apt-mark hold kubelet kubeadm kubectl
