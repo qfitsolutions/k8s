@@ -71,6 +71,7 @@ EOF
    11  sudo chmod 666 /var/run/docker.sock
    12  sudo systemctl enable docker.service
    13  sudo rm /etc/containerd/config.toml
+       sudo systemctl restart containerd
    14  mkdir -p /etc/apt/keyrings/
    26  sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
    17  sudo echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
