@@ -1,0 +1,32 @@
+
+
+   1  clear
+    2  sudo apt-get update
+    3  sudo apt-get install -y     apt-transport-https     ca-certificates     curl     gnupg     lsb-release
+    4  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    5  echo   "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+    6    $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    7  sudo apt-get update -y
+    8  sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+    9  cat <<EOF | sudo tee /etc/docker/daemon.json
+   10  {
+   11    "exec-opts": ["native.cgroupdriver=systemd"],
+   12    "log-driver": "json-file",
+   13    "log-opts": {
+   14      "max-size": "100m"
+   15    },
+   16    "storage-driver": "overlay2"
+   17  }
+   18  EOF
+   19  cat /etc/docker/daemon.json 
+   20  docker images
+   21  exit
+   22  history
+    9  sudo systemctl restart containerd
+   12  kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+   13  kubectl get node
+   14  kubectl gert pod --all-namespaces
+   15  kubectl get pod --all-namespaces
+   16  kubectl get node
+   17  kubectl get pod --all-namespaces
+   18  history
