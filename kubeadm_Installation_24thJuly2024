@@ -1,29 +1,43 @@
 https://www.fosstechnix.com/how-to-install-kubernetes-cluster-on-ubuntu/
 
-
-   1  clear
-    2  sudo apt-get update
-    3  sudo apt-get install -y     apt-transport-https     ca-certificates     curl     gnupg     lsb-release
-    4  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-    5  echo   "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-    6    $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    7  sudo apt-get update -y
-    8  sudo apt-get install docker-ce docker-ce-cli containerd.io -y
-    9  cat <<EOF | sudo tee /etc/docker/daemon.json
-   10  {
-   11    "exec-opts": ["native.cgroupdriver=systemd"],
-   12    "log-driver": "json-file",
-   13    "log-opts": {
-   14      "max-size": "100m"
-   15    },
-   16    "storage-driver": "overlay2"
-   17  }
-   18  EOF
-   19  cat /etc/docker/daemon.json 
-   20  docker images
-   21  exit
-   22  history
-    9  sudo systemctl restart containerd
+    1  sudo apt-get update
+    2  sudo apt-get install -y     apt-transport-https     ca-certificates     curl     gnupg     lsb-release
+    3  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    4  echo   "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+        $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    5  sudo apt-get update -y
+    6  sudo apt-get install docker-ce docker-ce-cli containerd.io containerd -y
+       sudo usermod -aG docker $USER
+        echo $USER
+        docker ps 
+        sudo chmod 666 /var/run/docker.sock
+      sudo systemctl start docker.service
+      sudo systemctl status docker.service
+      qsudo systemctl enable docker.service
+    7  cat <<EOF | sudo tee /etc/docker/daemon.json
+     {
+       "exec-opts": ["native.cgroupdriver=systemd"],
+       "log-driver": "json-file",
+       "log-opts": {
+         "max-size": "100m"
+       },
+       "storage-driver": "overlay2"
+     }
+     EOF
+   8  cat /etc/docker/daemon.json 
+      rm -rf /etc/containerd/config.toml 
+   9  sudo systemctl restart containerd
+   10  sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+   13  echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+   14  sudo apt-get update
+   15  sudo apt-get install -y kubelet kubeadm kubectl
+   16  curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+   17  echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+   18  sudo apt-get update
+   19  sudo apt-get install -y kubelet kubeadm kubectl
+   20  sudo apt-mark hold kubelet kubeadm kubectl
+   21  sudo systemctl enable --now kubelet
+   22  sudo kubeadm init --pod-network-cidr 10.0.0.0/16
    12  kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
    13  kubectl get node
    14  kubectl gert pod --all-namespaces
