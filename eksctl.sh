@@ -14,3 +14,7 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 sudo apt install unzip -y
 unzip awscliv2.zip
 sudo ./aws/install
+
+curl -LO https://dl.k8s.io/release/v1.30.0/bin/linux/amd64/kubectl
+chmod 777 kubectl
+mv kubectl /usr/local/bin/
