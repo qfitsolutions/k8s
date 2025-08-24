@@ -1,0 +1,37 @@
+aws acm request-certificate \
+  --region $AWS_REGION \
+  --domain-name $APP_HOST \
+  --validation-method DNS \
+  --idempotency-token hitcount$(date +%s) \
+  --query CertificateArn --output text
+
+
+
+  export ACM_CERT_ARN="<the ARN from above>"
+
+  aws acm describe-certificate \
+  --region $AWS_REGION \
+  --certificate-arn $ACM_CERT_ARN \
+  --query "Certificate.DomainValidationOptions[*].ResourceRecord" --output table
+
+
+  export R53_ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name $HOSTED_ZONE_DOMAIN --query 'HostedZones[0].Id' --output text | sed 's/\/hostedzone\///')
+
+cat > /tmp/validate-acm.json <<EOF
+{
+  "Comment": "ACM validation for $APP_HOST",
+  "Changes": [{
+    "Action": "UPSERT",
+    "ResourceRecordSet": {
+      "Name": "<ACM_CNAME_NAME_FROM_TABLE>",
+      "Type": "CNAME",
+      "TTL": 60,
+      "ResourceRecords": [{ "Value": "<ACM_CNAME_VALUE_FROM_TABLE>" }]
+    }
+  }]
+}
+EOF
+
+aws route53 change-resource-record-sets \
+  --hosted-zone-id $R53_ZONE_ID \
+  --change-batch file:///tmp/validate-acm.json
