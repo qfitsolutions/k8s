@@ -1,0 +1,80 @@
+
+
+helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+helm repo update
+
+# Install with secure defaults
+helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard \
+  --namespace kubernetes-dashboard --create-namespace
+
+
+
+# Create ServiceAccount and ClusterRoleBinding
+cat <<'YAML' | kubectl apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+YAML
+
+# Get a login token (K8s 1.24+)
+kubectl -n kubernetes-dashboard create token admin-user
+
+
+
+# Create a values file that makes Kong proxy a NodePort
+cat > values-nodeport.yaml <<'YAML'
+kong:
+  proxy:
+    type: NodePort
+    tls:
+      servicePort: 443       # keep TLS on the proxy
+    # If you prefer plain HTTP (not recommended), also set:
+    # http:
+    #   enabled: true
+    # and connect to the HTTP nodePort below.
+YAML
+
+# Apply the change
+helm upgrade kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard \
+  -n kubernetes-dashboard -f values-nodeport.yaml
+
+
+
+# Get the allocated nodePorts
+kubectl -n kubernetes-dashboard get svc kubernetes-dashboard-kong-proxy -o wide
+
+# Show worker node IPs
+kubectl get nodes -o wide
+
+# Then browse (from your network/VPN):
+#   https://<any-worker-node-ip>:<kong-proxy-nodePort>/
+# Login with the token from step 2.
+
+
+
+
+# Port‑forward the Kong proxy locally over TLS
+kubectl -n kubernetes-dashboard port-forward svc/kubernetes-dashboard-kong-proxy 8443:443
+# Visit https://localhost:8443 and use your token
+
+
+
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+
+
