@@ -1,0 +1,123 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hitcount
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: hitcount
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: redis }
+  template:
+    metadata:
+      labels: { app: redis }
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports: [{ containerPort: 6379 }]
+          resources:
+            requests: { cpu: "50m", memory: "64Mi" }
+            limits: { cpu: "200m", memory: "256Mi" }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: hitcount
+spec:
+  selector: { app: redis }
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hitcount-web
+  namespace: hitcount
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: hitcount-web }
+  template:
+    metadata:
+      labels: { app: hitcount-web }
+    spec:
+      containers:
+        - name: web
+          # Tiny Python Flask app that increments a counter in Redis and shows the count
+          image: public.ecr.aws/docker/library/python:3.12-alpine
+          command: ["sh","-c"]
+          args:
+            - |
+              pip install flask redis gunicorn && cat <<'PY' > app.py
+              from flask import Flask
+              import os, redis
+              r = redis.Redis(host=os.getenv("REDIS_HOST","redis"), port=int(os.getenv("REDIS_PORT","6379")), decode_responses=True)
+              app = Flask(__name__)
+              @app.route("/")
+              def index():
+                  c = r.incr("hits")
+                  return f"<h1>HitCount</h1><p>Hits: {c}</p>\n"
+              if __name__ == "__main__":
+                  app.run(host="0.0.0.0", port=8080)
+              PY
+              gunicorn -b 0.0.0.0:8080 app:app
+          env:
+            - name: REDIS_HOST
+              value: redis
+            - name: REDIS_PORT
+              value: "6379"
+          ports:
+            - containerPort: 8080
+          resources:
+            requests: { cpu: "50m", memory: "64Mi" }
+            limits: { cpu: "300m", memory: "256Mi" }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hitcount-svc
+  namespace: hitcount
+spec:
+  selector: { app: hitcount-web }
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+  type: NodePort
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hitcount-ing
+  namespace: hitcount
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/certificate-arn: REPLACE_WITH_ACM_CERT_ARN
+spec:
+  rules:
+    - host: REPLACE_WITH_APP_HOST   # e.g., hitcount.vytec.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hitcount-svc
+                port:
+                  number: 80
+  tls:
+    - hosts: [REPLACE_WITH_APP_HOST]
+      secretName: dummy-not-used-with-alb
